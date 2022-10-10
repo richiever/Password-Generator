@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <cstdio>
 #include <conio.h>
+#include <fstream>
 
 
 // gets amount of numbers
@@ -28,6 +29,18 @@ char randomizer()
 	return numberGen(mt);
 }
 
+void ClipboardCopier(std::string element)
+{
+	OpenClipboard(0);
+	EmptyClipboard();
+	const char* op{ element.c_str() };
+	const size_t ln = strlen(op) + 1;
+	HGLOBAL h = GlobalAlloc(GMEM_MOVEABLE, ln);
+	memcpy(GlobalLock(h), op, ln);
+	GlobalUnlock(h);
+	SetClipboardData(CF_TEXT, h);
+	CloseClipboard();
+}
 
 int main()
 {
@@ -45,16 +58,10 @@ int main()
 		passwordBase += base[j];
 	std::cout << "\nYour password is: " << passwordBase << "\n";
 
-	OpenClipboard(0);
-	EmptyClipboard();
-	const char* op{ passwordBase.c_str() };
-	const size_t ln = strlen(op) + 1;
-	HGLOBAL h = GlobalAlloc(GMEM_MOVEABLE, ln);
-	memcpy(GlobalLock(h), op, ln);
-	GlobalUnlock(h);
-	SetClipboardData(CF_TEXT, h);
-	CloseClipboard();
+
+	ClipboardCopier(passwordBase);
 	std::cout << "Your password has been copied to clipboard!" << std::endl;
 
+	// Create and open a text file(coming soon)
 	system("pause");
 }
